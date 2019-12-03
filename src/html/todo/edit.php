@@ -22,21 +22,10 @@
         $item = array();
         if (isset($_SESSION['post'])) {
             // POSTしたデータ
-            if (!empty($_SESSION['post']['item_name'])) {
-                $item['item_name'] = $_SESSION['post']['item_name'];
-            }
-
-            if (!empty($_SESSION['post']['user_id'])) {
-                $item['user_id'] = $_SESSION['post']['user_id'];
-            }
-
-            if (!empty($_SESSION['post']['expire_date'])) {
-                $item['expire_date'] = $_SESSION['post']['expire_date'];
-            }
-
-            if (!empty($_SESSION['post']['finished'])) {
-                $item['finished'] = $_SESSION['post']['finished'];
-            }
+            $item['item_name'] = $_SESSION['post']['item_name'];
+            $item['user_id'] = $_SESSION['post']['user_id'];
+            $item['expire_date'] = $_SESSION['post']['expire_date'];
+            $item['finished'] = $_SESSION['post']['finished'];
         } else {
             // 全ユーザーを取得
             $db = new UsersModel();
