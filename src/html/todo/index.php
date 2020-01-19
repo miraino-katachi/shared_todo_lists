@@ -43,9 +43,6 @@ try {
     // var_dump($e);
     header('Location: ../error/error.php');
 }
-
-// 奇数行・偶数行の判定用カウンタ
-$line = 0;
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -58,8 +55,19 @@ $line = 0;
     <title>作業一覧</title>
     <link rel="stylesheet" href="../css/bootstrap.min.css">
     <style>
+        /* ボタンを横並びにする */
         form {
             display: inline-block;
+        }
+
+        /* 打消し線を入れる */
+        tr.del > td {
+            text-decoration: line-through;
+        }
+
+        /* ボタンのセルは打消し線を入れない */
+        tr.del > td.button {
+            text-decoration: none;
         }
     </style>
 </head>
@@ -116,8 +124,12 @@ $line = 0;
             <tbody>
                 <?php
                 foreach ($items as $item) {
-                    if ($item['expire_date'] < date('Y-m-d') && empty($item['finished_date'])) {
+                    if ($item['expire_date'] < date('Y-m-d') && is_null($item['finished_date'])) {
+                        // 期限日が今日を過ぎていて、かつ、完了日がnullのとき、期限日を過ぎたレコードの背景色を変える
                         $class = ' class="text-danger"';
+                    } elseif (!is_null($item['finished_date'])) {
+                        // 完了日に値があるときは、完了したレコードの文字に打消し線を入れる
+                        $class = ' class="del"';
                     } else {
                         $class = '';
                     }
@@ -144,7 +156,7 @@ $line = 0;
                             }
                             ?>
                         </td>
-                        <td class="align-middle">
+                        <td class="align-middle button">
                             <form action="./complete.php" method="post" class="my-sm-1">
                                 <input type="hidden" name="item_id" value="<?= $item['id'] ?>">
                                 <button class="btn btn-primary my-0" type="submit">完了</button>
