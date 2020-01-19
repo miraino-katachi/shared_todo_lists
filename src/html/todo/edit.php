@@ -20,7 +20,7 @@
 
     try {
         $item = array();
-        if (isset($_SESSION['post'])) {
+        if (isset($_SESSION['post']['item_name'])) {
             // POSTしたデータ
             $item['item_name'] = $_SESSION['post']['item_name'];
             $item['user_id'] = $_SESSION['post']['user_id'];
