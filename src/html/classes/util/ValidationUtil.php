@@ -49,7 +49,7 @@ class ValidationUtil {
         }
 
         // UserModelクラスのisExistUser()メソッドを使って、該当のユーザーを検索した結果を返却
-        require_once($_SERVER['DOCUMENT_ROOT'].'/classes/model/UsersModel.php');
+        require_once('../classes/model/UsersModel.php');
         $db = new UsersModel();
         return $db->isExistsUser($userId);
     }

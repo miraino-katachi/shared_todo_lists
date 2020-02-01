@@ -1,5 +1,5 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'].'/classes/model/BaseModel.php');
+require_once('../classes/model/BaseModel.php');
 
 /**
  * ユーザーモデルクラスです。

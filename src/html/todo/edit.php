@@ -1,8 +1,8 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/util/SessionUtil.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/util/CommonUtil.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/model/TodoItemsModel.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/model/UsersModel.php');
+require_once('../classes/util/SessionUtil.php');
+require_once('../classes/util/CommonUtil.php');
+require_once('../classes/model/TodoItemsModel.php');
+require_once('../classes/model/UsersModel.php');
 
 // セッションスタート
 SessionUtil::sessionStart();
@@ -35,6 +35,9 @@ try {
         $db = new TodoItemsModel();
         $item = $db->getTodoItemById($post['item_id']);
     }
+
+    // POSTされてきたitem_idをセッションに保存
+    $_SESSION['post']['item_id'] = $post['item_id'];
 
     // POSTされてきたitem_idをセッションに保存
     $_SESSION['post']['item_id'] = $post['item_id'];

@@ -1,5 +1,5 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/util/SessionUtil.php');
+require_once('../classes/util/SessionUtil.php');
 
 // セッションスタート
 SessionUtil::sessionStart();

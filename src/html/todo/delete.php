@@ -1,8 +1,8 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/util/SessionUtil.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/util/CommonUtil.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/model/TodoItemsModel.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/model/UsersModel.php');
+require_once('../classes/util/SessionUtil.php');
+require_once('../classes/util/CommonUtil.php');
+require_once('../classes/model/TodoItemsModel.php');
+require_once('../classes/model/UsersModel.php');
 
 // セッションスタート
 SessionUtil::sessionStart();
@@ -29,7 +29,6 @@ try {
 
 // POSTされてきたitem_idをセッションに保存
 $_SESSION['post']['item_id'] = $post['item_id'];
-
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -82,7 +81,7 @@ $_SESSION['post']['item_id'] = $post['item_id'];
         <div class="row my-2">
             <div class="col-sm-3"></div>
             <div class="col-sm-6 alert alert-info">
-            下記の項目を削除します。よろしいですか？
+                下記の項目を削除します。よろしいですか？
             </div>
             <div class="col-sm-3"></div>
         </div>

@@ -1,7 +1,7 @@
 <?php
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/util/SessionUtil.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/util/CommonUtil.php');
-require_once($_SERVER['DOCUMENT_ROOT'] . '/classes/model/TodoItemsModel.php');
+require_once('../classes/util/SessionUtil.php');
+require_once('../classes/util/CommonUtil.php');
+require_once('../classes/model/TodoItemsModel.php');
 
 // セッションスタート
 SessionUtil::sessionStart();
@@ -61,12 +61,12 @@ try {
         }
 
         /* 打消し線を入れる */
-        tr.del > td {
+        tr.del>td {
             text-decoration: line-through;
         }
 
         /* ボタンのセルは打消し線を入れない */
-        tr.del > td.button {
+        tr.del>td.button {
             text-decoration: none;
         }
     </style>
