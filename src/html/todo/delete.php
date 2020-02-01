@@ -1,8 +1,8 @@
 <?php
-    require_once($_SERVER['DOCUMENT_ROOT'].'/classes/util/SessionUtil.php');
-    require_once($_SERVER['DOCUMENT_ROOT'].'/classes/util/CommonUtil.php');
-    require_once($_SERVER['DOCUMENT_ROOT'].'/classes/model/TodoItemsModel.php');
-    require_once($_SERVER['DOCUMENT_ROOT'].'/classes/model/UsersModel.php');
+    require_once('../classes/util/SessionUtil.php');
+    require_once('../classes/util/CommonUtil.php');
+    require_once('../classes/model/TodoItemsModel.php');
+    require_once('../classes/model/UsersModel.php');
 
     // セッションスタート
     SessionUtil::sessionStart();
