@@ -1,49 +1,61 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
+
 <head>
-<meta http-equiv="content-type" content="text/html; charset=utf-8">
-<title>ログイン</title>
-<link rel="stylesheet" href="../css/normalize.css">
-<link rel="stylesheet" href="../css/main.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>ログイン</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
 </head>
+
 <body>
-<div class="container">
-    <header>
-        <h1>ログイン</h1>
-    </header>
+    <nav class="navbar navbar-expand-md navbar-dark bg-primary">
+        <span class="navbar-brand">TODOリスト</span>
+    </nav>
 
-    <main>
-        <p class="error">
-            ユーザー名またはパスワードが違います。
-        </p>
-        <form action="../todo/index.html" method="post">
-            <table class="login">
-                <tr>
-                    <th class="login_field">
-                        ユーザー名
-                    </th>
-                    <td class="login_field">
-                        <input type="text" name="user" id="user" class="login_user" value="">
-                    </td>
-                </tr>
-                <tr>
-                    <th class="login_field">
-                        パスワード
-                    </th>
-                    <td class="login_field">
-                        <input type="password" name="password" id="password" class="login_pass" value="">
-                    </td>
-                </tr>
-            </table>
-            <input type="submit" value="ログイン" id="login">
-        </form>
+    <div class="container">
+        <div class="row my-2">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-3">
+                <h1></h1>
+            </div>
+            <div class="col-sm-3"></div>
+        </div>
 
 
-    </main>
+        <div class="row my-2">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-6">
+                <form action="./login.php" method="post">
+                    <div class="form-group">
+                        <label for="user">ユーザー名</label>
+                        <input type="text" class="form-control" id="user" name="user">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">パスワード</label>
+                        <input type="password" class="form-control" id="password" name="password">
+                    </div>
+                    <button type="submit" class="btn btn-primary">ログイン</button>
+                </form>
 
-    <footer>
+            </div>
+            <div class="col-sm-3"></div>
+        </div>
 
-    </footer>
-</div>
+
+
+
+        <footer>
+
+        </footer>
+    </div>
+
+    <!-- 必要なJavascriptを読み込む -->
+    <script src="../js/jquery-3.4.1.min.js"></script>
+    <script src="../js/bootstrap.bundle.min.js"></script>
+
 </body>
+
 </html>
