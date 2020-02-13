@@ -1,117 +1,128 @@
 <?php
-    require_once('../classes/util/SessionUtil.php');
-    require_once('../classes/util/CommonUtil.php');
-    require_once('../classes/model/TodoItemsModel.php');
-    require_once('../classes/model/UsersModel.php');
+require_once('../classes/util/SessionUtil.php');
+require_once('../classes/util/CommonUtil.php');
+require_once('../classes/model/TodoItemsModel.php');
+require_once('../classes/model/UsersModel.php');
 
-    // セッションスタート
-    SessionUtil::sessionStart();
+// セッションスタート
+SessionUtil::sessionStart();
 
-    if (empty($_SESSION['user'])) {
-        // 未ログインのとき
-        header('Location: ../login/');
-    } else {
-        // ログイン済みのとき
-        $user = $_SESSION['user'];
-    }
+if (empty($_SESSION['user'])) {
+    // 未ログインのとき
+    header('Location: ../login/');
+} else {
+    // ログイン済みのとき
+    $user = $_SESSION['user'];
+}
 
-    // サニタイズ
-    $post = CommonUtil::sanitaize($_POST);
+// サニタイズ
+$post = CommonUtil::sanitaize($_POST);
 
-    try {
-        // 指定IDの作業項目を取得
-        $db = new TodoItemsModel();
-        $item = $db->getTodoItemById($post['item_id']);
+try {
+    // 指定IDの作業項目を取得
+    $db = new TodoItemsModel();
+    $item = $db->getTodoItemById($post['item_id']);
+} catch (Exception $e) {
+    // var_dump($e);
+    header('Location: ../error/error.php');
+}
 
-    } catch (Exception $e) {
-        // var_dump($e);
-        header('Location: ../error/error.php');
-    }
-
-    // POSTされてきたitem_idをセッションに保存
-    $_SESSION['post']['item_id'] = $post['item_id'];
-
+// POSTされてきたitem_idをセッションに保存
+$_SESSION['post']['item_id'] = $post['item_id'];
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="ja">
+
 <head>
-<meta http-equiv="content-type" content="text/html; charset=utf-8">
-<title>削除確認</title>
-<link rel="stylesheet" href="../css/normalize.css">
-<link rel="stylesheet" href="../css/main.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>削除確認</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
 </head>
+
 <body>
-<div class="container">
-    <header>
-         <div class="title">
-            <h1>削除確認</h1>
-        </div>
-        <div class="login_info">
-            <ul>
-            <li>ようこそ<?=$user['family_name'].$user['first_name'] ?>さん</li>
-                <li>
-                    <form>
-                        <input type="button" value="ログアウト" onclick="location.href='../login/index.html';">
-                    </form>
+    <!-- ナビゲーション -->
+    <nav class="navbar navbar-expand-md navbar-dark bg-primary">
+        <span class="navbar-brand">TODOリスト</span>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="./">作業一覧</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="./entry.php">作業登録 <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <?= $user['family_name'] . $user['first_name'] ?>さん
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="../login/logout.php">ログアウト</a>
+                    </div>
                 </li>
             </ul>
+            <form class="form-inline my-2 my-lg-0" action="./" method="get">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search" value="">
+                <button class="btn btn-outline-light my-2 my-sm-0" type="submit">検索</button>
+            </form>
         </div>
-    </header>
+    </nav>
+    <!-- ナビゲーション ここまで -->
 
-    <main>
-    <?php if (!empty($_SESSION['msg']['error'])): ?>
-        <p class="error">
-            <?=$_SESSION['msg']['error']?>
-        </p>
-    <?php endif ?>
+    <!-- コンテナ -->
+    <div class="container">
+        <div class="row my-2">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-6 alert alert-info">
+                下記の項目を削除します。よろしいですか？
+            </div>
+            <div class="col-sm-3"></div>
+        </div>
 
-        <p>
-            下記の項目を削除します。よろしいですか？
-        </p>
-        <form action="./delete_action.php" method="post">
-            <table class="list">
-                <tr>
-                    <th>項目名</th>
-                    <td class="align-left">
-                        <?=$item['item_name']?>
-                    </td>
-                </tr>
-                <tr>
-                    <th>担当者</th>
-                    <td class="align-left">
-                    <?=$user['family_name'].$user['first_name']?>
-                    </td>
-                </tr>
-                <tr>
-                    <th>期限</th>
-                    <td class="align-left">
-                        <?=$item['expire_date']?>
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        完了
-                    </th>
-                    <td class="align-left">
-                        <?php if (empty($item['finished_date'])): ?>
-                        未完了
-                        <?php else: ?>
-                        完了
-                        <?php endif ?>
-                    </td>
-                </tr>
-            </table>
+        <!-- 入力フォーム -->
+        <div class="row my-2">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-6">
+                <form action="./delete_action.php" method="post">
+                    <div class="form-group">
+                        <label for="item_name">項目名</label>
+                        <p name="item_name" id="item_name" class="form-control"><?= $item['item_name'] ?></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="user_id">担当者</label>
+                        <p name="user_id" id="user_id" class="form-control"><?= $user['family_name'] . $user['first_name'] ?></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="expire_date">期限</label>
+                        <p class="form-control" id="expire_date" name="expire_date"><?= $item['expire_date'] ?>
+                    </div>
+                    <div class="form-group form-check">
+                        <input type="checkbox" class="form-check-input" id="finished" name="finished" value="1" <?php if (!is_null($item['finished_date'])) echo " checked" ?> disabled>
+                        <label for="finished">完了</label>
+                    </div>
 
-            <input type="submit" value="削除">
-            <input type="button" value="キャンセル" onclick="location.href='./index.php';">
-        </form>
+                    <input type="submit" value="削除" class="btn btn-danger">
+                    <input type="button" value="キャンセル" class="btn btn-outline-primary" onclick="location.href='./';">
+                </form>
+            </div>
+            <div class="col-sm-3"></div>
+        </div>
+        <!-- 入力フォーム ここまで -->
 
+    </div>
+    <!-- コンテナ ここまで -->
 
-    </main>
+    <!-- 必要なJavascriptを読み込む -->
+    <script src="../js/jquery-3.4.1.min.js"></script>
+    <script src="../js/bootstrap.bundle.min.js"></script>
 
-    <footer>
-
-    </footer>
-</div>
 </body>
+
 </html>
