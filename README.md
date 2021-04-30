@@ -18,7 +18,7 @@ https://demo.miraino-katachi.com/shared_todo_lists/login/
 
 CSSをBootstrap4にしてみました。
 
-ログインが必要なのTODOリストです。下記のことが練習できます。
+ログインが必要なTODOリストです。下記のことが練習できます。
 - フォームから入力した値を送信先のページで受け取る
 - セッションの使い方
 - 入力値のバリデーション
