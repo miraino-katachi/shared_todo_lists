@@ -2,6 +2,20 @@
 
 https://demo.miraino-katachi.com/shared_todo_lists/login/
 
+```
+上記のユーザー名とパスワードは、
+
+ユーザー1
+ユーザー名：katachi1
+パスワード：mirainokatach1
+
+ユーザー2
+ユーザー名：katachi2
+パスワード：mirainokatach1
+
+です。課題のものとは異なります。
+```
+
 CSSをBootstrap4にしてみました。
 
 ログインが必要なのTODOリストです。下記のことが練習できます。
