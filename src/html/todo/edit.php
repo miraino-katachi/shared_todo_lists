@@ -19,30 +19,24 @@ if (empty($_SESSION['user'])) {
 $post = CommonUtil::sanitaize($_POST);
 
 try {
+    // 全ユーザーを取得
+    $db = new UsersModel();
+    $users = $db->getUserAll();
+
     $item = array();
     if (isset($_SESSION['post']['item_name'])) {
         // POSTしたデータ
+        $item['id'] = $_SESSION['post']['id'];
         $item['item_name'] = $_SESSION['post']['item_name'];
         $item['user_id'] = $_SESSION['post']['user_id'];
         $item['expire_date'] = $_SESSION['post']['expire_date'];
-        $item['finished'] = $_SESSION['post']['finished'];
+        $item['finished_date'] = $_SESSION['post']['finished_date'];
     } else {
-        // 全ユーザーを取得
-        $db = new UsersModel();
-        $users = $db->getUserAll();
-
         // 指定IDの作業項目を取得
         $db = new TodoItemsModel();
         $item = $db->getTodoItemById($post['item_id']);
     }
-
-    // POSTされてきたitem_idをセッションに保存
-    $_SESSION['post']['item_id'] = $post['item_id'];
-
-    // POSTされてきたitem_idをセッションに保存
-    $_SESSION['post']['item_id'] = $post['item_id'];
 } catch (Exception $e) {
-    // var_dump($e);
     header('Location: ../error/error.php');
 }
 ?>
@@ -120,6 +114,7 @@ try {
             <div class="col-sm-3"></div>
             <div class="col-sm-6">
                 <form action="./edit_action.php" method="post">
+                    <input type="hidden" name="id" value="<?= $item['id'] ?>">
                     <div class="form-group">
                         <label for="item_name">項目名</label>
                         <input type="text" name="item_name" id="item_name" class="form-control" value="<?= $item['item_name'] ?>">
@@ -138,7 +133,7 @@ try {
                         <input type="date" class="form-control" id="expire_date" name="expire_date" value="<?= $item['expire_date'] ?>">
                     </div>
                     <div class="form-group form-check">
-                        <input type="checkbox" class="form-check-input" id="finished" name="finished" value="1" <?php if (!is_null($item['finished_date'])) echo " checked" ?>>
+                        <input type="checkbox" class="form-check-input" id="finished" name="finished_date" value="1" <?php if (!is_null($item['finished_date'])) echo " checked" ?>>
                         <label for="finished">完了</label>
                     </div>
 

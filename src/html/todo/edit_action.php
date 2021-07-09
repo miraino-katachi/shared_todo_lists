@@ -19,39 +19,46 @@ if (empty($_SESSION['user'])) {
 $post = CommonUtil::sanitaize($_POST);
 
 // POSTされてきた値をセッション変数に保存する
+$_SESSION['post']['id'] = $post['id'];
 $_SESSION['post']['item_name'] = $post['item_name'];
 $_SESSION['post']['user_id'] = $post['user_id'];
 $_SESSION['post']['expire_date'] = $post['expire_date'];
-$_SESSION['post']['finished'] = !empty($post['finished']) ? $post['finished'] : null;
+$_SESSION['post']['finished_date'] = !empty($post['finished_date']) ? $post['finished_date'] : null;
 
 // バリデーション
+if ($post['item_name'] == '') {
+    $_SESSION['msg']['error'] = "項目名を入力してください。";
+    header('Location: ./edit.php');
+    exit;
+}
+
 if (!ValidationUtil::isValidItemName($post['item_name'])) {
-    $_SESSION['msg']['error'] = "項目名を正しく入力してください。（項目名は100文字以下にしてください）";
-    header('Location: ./entry.php');
+    $_SESSION['msg']['error'] = "項目名は100文字以下にしてください。";
+    header('Location: ./edit.php');
     exit;
 }
 
 if (empty($post['user_id'])) {
     $_SESSION['msg']['error'] = "担当者を選択してください。";
-    header('Location: ./entry.php');
+    header('Location: ./edit.php');
     exit;
 }
 
 if (!ValidationUtil::isValidUserId($post['user_id'])) {
     $_SESSION['msg']['error'] = "指定の担当者は存在しません。";
-    header('Location: ./entry.php');
+    header('Location: ./edit.php');
     exit;
 }
 
 if (!ValidationUtil::isDate($post['expire_date'])) {
     $_SESSION['msg']['error'] = "期限日の日付が正しくありません。";
-    header('Location: ./entry.php');
+    header('Location: ./edit.php');
     exit;
 }
 
-if (!empty($post['finished']) && $post['finished'] != 1) {
+if (!empty($post['finished']) && $post['finished_date'] != 1) {
     $_SESSION['msg']['error'] = "完了のチェックボックスの値が正しくありません。";
-    header('location ./entry.php');
+    header('location ./edit.php');
     exit;
 }
 
@@ -61,10 +68,9 @@ $_SESSION['msg']['error'] = '';
 
 // データベースに登録する内容を連想配列にする。
 $data = array(
-    'id' => $_SESSION['post']['item_id'],
+    'id' => $post['id'],
     'user_id' => $post['user_id'],
     'item_name' => $post['item_name'],
-    'registration_date' => date('Y-m-d'),
     'expire_date' => $post['expire_date'],
     'finished_date' => isset($post['finished']) && $post['finished'] == 1 ? date('Y-m-d') : null,
     'is_deleted' => 0,
@@ -78,6 +84,5 @@ try {
 
     header('Location: ./');
 } catch (Exception $e) {
-    // var_dump($e);
     header('Location: ../error/error.php');
 }

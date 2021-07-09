@@ -25,9 +25,15 @@ $_SESSION['post']['expire_date'] = $post['expire_date'];
 $_SESSION['post']['finished'] = !empty($post['finished']) ? $post['finished'] : null;
 
 // バリデーション
+if ($post['item_name'] == '') {
+    $_SESSION['msg']['error'] = "項目名を入力してください。";
+    header('Location: ./edit.php');
+    exit;
+}
+
 if (!ValidationUtil::isValidItemName($post['item_name'])) {
-    $_SESSION['msg']['error'] = "項目名を正しく入力してください。（項目名は100文字以下にしてください）";
-    header('Location: ./entry.php');
+    $_SESSION['msg']['error'] = "項目名は100文字以下にしてください。";
+    header('Location: ./edit.php');
     exit;
 }
 
