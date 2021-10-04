@@ -1,15 +1,17 @@
 <?php
-require_once('../classes/util/SessionUtil.php');
-require_once('../classes/util/CommonUtil.php');
-require_once('../classes/model/TodoItemsModel.php');
 
-// セッションスタート
-SessionUtil::sessionStart();
+// 設定ファイルを読み込む。
+require_once('../../App/config.php');
 
-// 既に設定済みのセッションに保存されたPOSTデータを削除
+// クラスを読み込む
+use App\Util\Common;
+use App\Model\Base;
+use App\Model\TodoItems;
+
+// セッションに保存されたPOSTデータを削除（念の為）
 unset($_SESSION['post']);
 
-// エラーメッセージを削除
+// 保存されているエラーメッセージを削除（念の為）
 unset($_SESSION['msg']['error']);
 
 if (empty($_SESSION['user'])) {
@@ -24,14 +26,15 @@ try {
     // 通常の一覧表示か、検索結果かを保存するフラグ
     $isSearch = false;
 
-    $db = new TodoItemsModel();
+    $base = Base::getInstance();
+    $db = new TodoItems($base);
 
     // 検索キーワード
     $search = "";
 
     if (isset($_GET['search'])) {
         // GETに項目があるときは、検索
-        $get = CommonUtil::sanitaize($_GET);
+        $get = Common::sanitaize($_GET);
         $search = $get['search'];
         $isSearch = true;
         $items = $db->getTodoItemBySearch($search);
@@ -40,9 +43,12 @@ try {
         $items = $db->getTodoItemAll();
     }
 } catch (Exception $e) {
-    // var_dump($e);
     header('Location: ../error/error.php');
 }
+
+// ワンタイムトークンの生成
+$token = Common::generateToken();
+
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -157,18 +163,13 @@ try {
                             ?>
                         </td>
                         <td class="align-middle button">
-                            <form action="./complete.php" method="post" class="my-sm-1">
+                            <form action="./complete_action.php" method="post" class="my-sm-1">
+                                <input type="hidden" name="token" value="<?= $token ?>">
                                 <input type="hidden" name="item_id" value="<?= $item['id'] ?>">
                                 <button class="btn btn-primary my-0" type="submit">完了</button>
                             </form>
-                            <form action="edit.php" method="post" class="my-sm-1">
-                                <input type="hidden" name="item_id" value="<?= $item['id'] ?>">
-                                <input class="btn btn-primary my-0" type="submit" value="修正">
-                            </form>
-                            <form action="delete.php" method="post" class="my-sm-1">
-                                <input type="hidden" name="item_id" value="<?= $item['id'] ?>">
-                                <input class="btn btn-primary my-0" type="submit" value="削除">
-                            </form>
+                            <a href="./edit.php?item_id=<?= $item['id'] ?>" class="btn btn-success my-0">修正</a>
+                            <a href="./delete.php?item_id=<?= $item['id'] ?>" class="btn btn-danger my-0">削除</a>
                         </td>
                         </tr>
                     <?php

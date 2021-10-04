@@ -1,9 +1,15 @@
 <?php
 
+namespace App\Util;
+
+use App\Model\Base;
+use App\Model\Users;
+
 /**
  * バリデーションユーティリティクラスです。
  */
-class ValidationUtil {
+class Validation
+{
 
     /**
      * 正しい日付形式の文字列かどうかを判定します。
@@ -11,7 +17,8 @@ class ValidationUtil {
      * @param string $date 日付形式の文字列
      * @return boolean 正しいとき：true、正しくないとき：false
      */
-    public static function isDate($date) {
+    public static function isDate($date)
+    {
         // strtotime()関数を使って、タイムスタンプに変換できるかどうかで正しい日付かどうかを調べます。
         // https://www.php.net/manual/ja/function.strtotime.php
         // 参照
@@ -24,7 +31,8 @@ class ValidationUtil {
      * @param string $itemName 項目名
      * @return boolean 正しいとき：true、正しくないとき：false
      */
-    public static function isValidItemName($itemName) {
+    public static function isValidItemName($itemName)
+    {
         if (strlen($itemName) > 100) {
             return false;
         }
@@ -34,23 +42,24 @@ class ValidationUtil {
     /**
      * 指定IDのユーザーが存在するかどうか判定します。
      *
-     * @param int $userId ユーザーID
+     * @param int $user_id ユーザーID
      * @return boolean
      */
-    public static function isValidUserId($userId) {
-        // $userIdが数字でなかったら、falseを返却
-        if (!is_numeric($userId)) {
+    public static function isValidUserId($user_id)
+    {
+        // $user_idが数字でなかったら、falseを返却
+        if (!is_numeric($user_id)) {
             return false;
         }
 
-        // $userIdが0以下はありえないので、falseを返却
-        if ($userId <= 0) {
+        // $user_idが0以下はありえないので、falseを返却
+        if ($user_id <= 0) {
             return false;
         }
 
-        // UserModelクラスのisExistUser()メソッドを使って、該当のユーザーを検索した結果を返却
-        require_once('../classes/model/UsersModel.php');
-        $db = new UsersModel();
-        return $db->isExistsUser($userId);
+        // UserクラスのisExistUser()メソッドを使って、該当のユーザーを検索した結果を返却
+        $base = Base::getInstance();
+        $db = new Users($base);
+        return $db->isExistsUser($user_id);
     }
 }

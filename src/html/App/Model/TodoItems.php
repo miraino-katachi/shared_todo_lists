@@ -1,17 +1,24 @@
 <?php
-require_once('../classes/model/BaseModel.php');
+
+namespace App\Model;
 
 /**
  * 作業項目モデルクラスです。
  */
-class TodoItemsModel extends BaseModel
+class TodoItems
 {
+    /** @var \PDO $pdo PDOクラスインスタンス */
+    private $pdo;
+
     /**
      * コンストラクタです。
+     *
+     * @param \PDO $pdo \PDOクラスインスタンス
      */
-    public function __construct() {
-        // 親クラスのコンストラクタを呼び出す
-        parent::__construct();
+    public function __construct($pdo) {
+        // 引数に指定されたPDOクラスのインスタンスをプロパティに代入します。
+        // クラスのインスタンスは別の変数に代入されても同じものとして扱われます。（複製されるわけではありません）
+        $this->pdo = $pdo;
     }
 
     /**
@@ -35,9 +42,9 @@ class TodoItemsModel extends BaseModel
         $sql .= 'where t.is_deleted=0 ';        // 論理削除されている作業項目は表示対象外
         $sql .= 'order by t.expire_date asc';   // 期限日の順番に並べる
 
-        $stmt = $this->dbh->prepare($sql);
+        $stmt = $this->pdo->prepare($sql);
         $stmt->execute();
-        $ret = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $ret = $stmt->fetchAll();
 
         return $ret;
     }
@@ -76,15 +83,15 @@ class TodoItemsModel extends BaseModel
         // 下記のようにして、検索ワードを変数に入れる。
         $likeWord = "%$search%";
 
-        $stmt = $this->dbh->prepare($sql);
-        $stmt->bindParam(':item_name', $likeWord, PDO::PARAM_STR);
-        $stmt->bindParam(':family_name', $likeWord, PDO::PARAM_STR);
-        $stmt->bindParam(':first_name', $likeWord, PDO::PARAM_STR);
-        $stmt->bindParam(':registration_date', $search, PDO::PARAM_STR);
-        $stmt->bindParam(':expire_date', $search, PDO::PARAM_STR);
-        $stmt->bindParam(':finished_date', $search, PDO::PARAM_STR);
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':item_name', $likeWord, \PDO::PARAM_STR);
+        $stmt->bindParam(':family_name', $likeWord, \PDO::PARAM_STR);
+        $stmt->bindParam(':first_name', $likeWord, \PDO::PARAM_STR);
+        $stmt->bindParam(':registration_date', $search, \PDO::PARAM_STR);
+        $stmt->bindParam(':expire_date', $search, \PDO::PARAM_STR);
+        $stmt->bindParam(':finished_date', $search, \PDO::PARAM_STR);
         $stmt->execute();
-        $ret = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $ret = $stmt->fetchAll();
 
         return $ret;
     }
@@ -120,10 +127,10 @@ class TodoItemsModel extends BaseModel
         $sql .= 'where t.id=:id ';
         $sql .= 'and t.is_deleted=0';
 
-        $stmt = $this->dbh->prepare($sql);
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':id', $id, \PDO::PARAM_INT);
         $stmt->execute();
-        $ret = $stmt->fetch(PDO::FETCH_ASSOC);
+        $ret = $stmt->fetch();
 
         return $ret;
     }
@@ -151,12 +158,12 @@ class TodoItemsModel extends BaseModel
         $sql .= ':finished_date';
         $sql .= ')';
 
-        $stmt = $this->dbh->prepare($sql);
-        $stmt->bindParam(':user_id', $data['user_id'], PDO::PARAM_INT);
-        $stmt->bindParam(':item_name', $data['item_name'], PDO::PARAM_STR);
-        $stmt->bindParam(':registration_date', $data['registration_date'], PDO::PARAM_STR);
-        $stmt->bindParam(':expire_date', $data['expire_date'], PDO::PARAM_STR);
-        $stmt->bindParam(':finished_date', $data['finished_date'], PDO::PARAM_STR);
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':user_id', $data['user_id'], \PDO::PARAM_INT);
+        $stmt->bindParam(':item_name', $data['item_name'], \PDO::PARAM_STR);
+        $stmt->bindParam(':registration_date', $data['registration_date'], \PDO::PARAM_STR);
+        $stmt->bindParam(':expire_date', $data['expire_date'], \PDO::PARAM_STR);
+        $stmt->bindParam(':finished_date', $data['finished_date'], \PDO::PARAM_STR);
         $ret = $stmt->execute();
 
         return $ret;
@@ -194,14 +201,14 @@ class TodoItemsModel extends BaseModel
         $sql .= 'is_deleted=:is_deleted ';  // 現状の仕様では「削除フラグ」をアップデートする必要はないが、今後の仕様追加のために実装しておく。
         $sql .= 'where id=:id';
 
-        $stmt = $this->dbh->prepare($sql);
-        $stmt->bindParam(':user_id', $data['user_id'], PDO::PARAM_INT);
-        $stmt->bindParam(':item_name', $data['item_name'], PDO::PARAM_STR);
-        $stmt->bindParam(':registration_date', $data['registration_date'], PDO::PARAM_STR);
-        $stmt->bindParam(':expire_date', $data['expire_date'], PDO::PARAM_STR);
-        $stmt->bindParam(':finished_date', $data['finished_date'], PDO::PARAM_STR);
-        $stmt->bindParam(':is_deleted', $data['is_deleted'], PDO::PARAM_INT);
-        $stmt->bindParam(':id', $data['id'], PDO::PARAM_INT);
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':user_id', $data['user_id'], \PDO::PARAM_INT);
+        $stmt->bindParam(':item_name', $data['item_name'], \PDO::PARAM_STR);
+        $stmt->bindParam(':registration_date', $data['registration_date'], \PDO::PARAM_STR);
+        $stmt->bindParam(':expire_date', $data['expire_date'], \PDO::PARAM_STR);
+        $stmt->bindParam(':finished_date', $data['finished_date'], \PDO::PARAM_STR);
+        $stmt->bindParam(':is_deleted', $data['is_deleted'], \PDO::PARAM_INT);
+        $stmt->bindParam(':id', $data['id'], \PDO::PARAM_INT);
         $ret = $stmt->execute();
 
         return $ret;
@@ -238,9 +245,9 @@ class TodoItemsModel extends BaseModel
         $sql .= 'finished_date=:finished_date ';
         $sql .= 'where id=:id';
 
-        $stmt = $this->dbh->prepare($sql);
-        $stmt->bindParam(':finished_date', $date, PDO::PARAM_STR);
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':finished_date', $date, \PDO::PARAM_STR);
+        $stmt->bindParam(':id', $id, \PDO::PARAM_INT);
         $ret = $stmt->execute();
 
         return $ret;
@@ -268,8 +275,8 @@ class TodoItemsModel extends BaseModel
         $sql .= 'is_deleted=1 ';
         $sql .= 'where id=:id';
 
-        $stmt = $this->dbh->prepare($sql);
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':id', $id, \PDO::PARAM_INT);
         $ret = $stmt->execute();
 
         return $ret;

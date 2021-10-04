@@ -1,11 +1,12 @@
 <?php
-require_once('../classes/util/SessionUtil.php');
-require_once('../classes/util/CommonUtil.php');
-require_once('../classes/model/TodoItemsModel.php');
-require_once('../classes/model/UsersModel.php');
 
-// セッションスタート
-SessionUtil::sessionStart();
+// 設定ファイルを読みこむ。
+require_once('../../App/config.php');
+
+// クラスを読み込む。
+use App\Util\Common;
+use App\Model\Base;
+use App\Model\Users;
 
 if (empty($_SESSION['user'])) {
     // 未ログインのとき
@@ -15,30 +16,14 @@ if (empty($_SESSION['user'])) {
     $user = $_SESSION['user'];
 }
 
-// サニタイズ
-$post = CommonUtil::sanitaize($_POST);
+// 担当者（ユーザー）のレコードを取得
+$base = Base::getInstance();
+$db = new Users($base);
+$users = $db->getUserAll();
 
-try {
-    // 全ユーザーを取得
-    $db = new UsersModel();
-    $users = $db->getUserAll();
+// ワンタイムトークンを生成する。
+$token = Common::generateToken();
 
-    $item = array();
-    if (isset($_SESSION['post']['item_name'])) {
-        // POSTしたデータ
-        $item['id'] = $_SESSION['post']['id'];
-        $item['item_name'] = $_SESSION['post']['item_name'];
-        $item['user_id'] = $_SESSION['post']['user_id'];
-        $item['expire_date'] = $_SESSION['post']['expire_date'];
-        $item['finished_date'] = $_SESSION['post']['finished_date'];
-    } else {
-        // 指定IDの作業項目を取得
-        $db = new TodoItemsModel();
-        $item = $db->getTodoItemById($post['item_id']);
-    }
-} catch (Exception $e) {
-    header('Location: ../error/error.php');
-}
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -48,7 +33,7 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <title>作業修正</title>
+    <title>作業登録</title>
     <link rel="stylesheet" href="../css/bootstrap.min.css">
 </head>
 
@@ -65,7 +50,7 @@ try {
                 <li class="nav-item">
                     <a class="nav-link" href="./">作業一覧</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item active">
                     <a class="nav-link" href="./entry.php">作業登録 <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item dropdown">
@@ -88,60 +73,54 @@ try {
 
     <!-- コンテナ -->
     <div class="container">
-        <div class="row my-2">
-            <div class="col-sm-3"></div>
+        <div class="row my-2 justify-content-center">
             <div class="col-sm-6 alert alert-info">
-                作業内容を修正してください
+                作業を登録してください
             </div>
-            <div class="col-sm-3"></div>
         </div>
 
         <!-- エラーメッセージ -->
         <?php if (!empty($_SESSION['msg']['error'])) : ?>
-            <div class="row my-2">
-                <div class="col-sm-3"></div>
+            <div class="row my-2 justify-content-center">
                 <div class="col-sm-6 alert alert-danger alert-dismissble fade show">
                     <?= $_SESSION['msg']['error'] ?>
                     <button class="close" data-dismiss="alert">&times;</button>
                 </div>
-                <div class="col-sm-3"></div>
             </div>
         <?php endif ?>
         <!-- エラーメッセージ ここまで -->
 
         <!-- 入力フォーム -->
-        <div class="row my-2">
-            <div class="col-sm-3"></div>
+        <div class="row my-2 justify-content-center">
             <div class="col-sm-6">
-                <form action="./edit_action.php" method="post">
-                    <input type="hidden" name="id" value="<?= $item['id'] ?>">
+                <form action="./entry_action.php" method="post">
+                    <input type="hidden" name="token" value="<?= $token ?>">
                     <div class="form-group">
                         <label for="item_name">項目名</label>
-                        <input type="text" name="item_name" id="item_name" class="form-control" value="<?= $item['item_name'] ?>">
+                        <input type="text" class="form-control" id="item_name" name="item_name" value="<?= isset($_SESSION['post']['item_name']) ? $_SESSION['post']['item_name'] : '' ?>">
                     </div>
                     <div class="form-group">
                         <label for="user_id">担当者</label>
                         <select name="user_id" id="user_id" class="form-control">
                             <option value="">--選択してください--</option>
                             <?php foreach ($users as $user) : ?>
-                                <option value="<?= $user['id'] ?>" <?php if ($item['user_id'] == $user['id']) echo " selected" ?>><?= $user['family_name'] . $user['first_name'] ?></option>
+                                <option value="<?= $user['id'] ?>" <?= isset($_SESSION['post']['user_id']) && $_SESSION['post']['user_id'] == $user['id'] ? 'selected' : '' ?>><?= $user['family_name'] . $user['first_name'] ?></option>
                             <?php endforeach ?>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="expire_date">期限</label>
-                        <input type="date" class="form-control" id="expire_date" name="expire_date" value="<?= $item['expire_date'] ?>">
+                        <input type="date" class="form-control" id="expire_date" name="expire_date" value="<?= isset($_SESSION['post']['expire_date']) ? $_SESSION['post']['expire_date'] : '' ?>">
                     </div>
                     <div class="form-group form-check">
-                        <input type="checkbox" class="form-check-input" id="finished" name="finished_date" value="1" <?php if (!is_null($item['finished_date'])) echo " checked" ?>>
+                        <input type="checkbox" class="form-check-input" id="finished" name="finished" value="1" <?= isset($_SESSION['post']['finished']) ? 'checked' : '' ?>>
                         <label for="finished">完了</label>
                     </div>
 
-                    <input type="submit" value="更新" class="btn btn-primary">
-                    <input type="button" value="キャンセル" class="btn btn-outline-primary" onclick="location.href='./';">
+                    <input type="submit" value="登録" class="btn btn-primary">
+                    <a href="./" class="btn btn-outline-primary">キャンセル</a>
                 </form>
             </div>
-            <div class="col-sm-3"></div>
         </div>
         <!-- 入力フォーム ここまで -->
 
