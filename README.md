@@ -89,6 +89,12 @@ $base = new App\Model\Base();
 例）
 TodoItemクラス→TodoItem.php
 
+PHPの組み込みクラスを使うときは、クラス名の先頭に「\（バックスラッシュ）」を付ける必要があります、
+
+例）
+$date = new \Datetime();
+
+
 ## 命名規則
 クラス名、メソッド名、変数名、定数名などは、PHPの命名規則であるPSRに準拠させています。
 
