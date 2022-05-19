@@ -6,7 +6,7 @@ require_once('../../App/config.php');
 use App\Util\Common;
 use App\Util\Validation;
 use App\Model\Base;
-use App\model\TodoItems;
+use App\Model\TodoItems;
 
 // エラーメッセージを削除する
 unset($_SESSION['msg']['error']);
