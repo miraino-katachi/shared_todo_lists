@@ -195,7 +195,7 @@ class TodoItems
         $sql .= 'update todo_items set ';
         $sql .= 'user_id=:user_id,';
         $sql .= 'item_name=:item_name,';
-        $sql .= 'registration_date=:registration_date,';
+        $sql .= isset($data['registration_date']) ? 'registration_date=:registration_date,' : '';
         $sql .= 'expire_date=:expire_date,';
         $sql .= 'finished_date=:finished_date,';
         $sql .= 'is_deleted=:is_deleted ';  // 現状の仕様では「削除フラグ」をアップデートする必要はないが、今後の仕様追加のために実装しておく。
@@ -204,7 +204,9 @@ class TodoItems
         $stmt = $this->pdo->prepare($sql);
         $stmt->bindParam(':user_id', $data['user_id'], \PDO::PARAM_INT);
         $stmt->bindParam(':item_name', $data['item_name'], \PDO::PARAM_STR);
-        $stmt->bindParam(':registration_date', $data['registration_date'], \PDO::PARAM_STR);
+        if (isset($data['registration_date'])) {
+            $stmt->bindParam(':registration_date', $data['registration_date'], \PDO::PARAM_STR);
+        }
         $stmt->bindParam(':expire_date', $data['expire_date'], \PDO::PARAM_STR);
         $stmt->bindParam(':finished_date', $data['finished_date'], \PDO::PARAM_STR);
         $stmt->bindParam(':is_deleted', $data['is_deleted'], \PDO::PARAM_INT);
