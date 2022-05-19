@@ -1,6 +1,8 @@
 # 【PHP】共有TODOリスト
 
-https://demo.miraino-katachi.com/shared_todo_lists/login/
+課題のデモサイトはこちらです。動作の確認をこちらでしていただけます。
+
+<a href="https://demo.miraino-katachi.com/shared_todo_lists/public/login" target="_blank">demo.miraino-katachi.com/shared_todo_lists/public/login</a>
 
 ```
 上記のユーザー名とパスワードは、
